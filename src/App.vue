@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <Header />
-    <h2>hihihihi i am main</h2>
+    <router-view></router-view>
     <Footer />
   </div>
 </template>
@@ -13,8 +13,18 @@ import Header from "./components/header";
 export default {
   components: {
     Footer,
-    Header
+    Header,
+  },
+  data() {
+    return {
+      
+    } 
+    
+  },
+  methods: {
+    
   }
+  
 };
 </script>
 <style lang="less">
