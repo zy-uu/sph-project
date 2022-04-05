@@ -5,7 +5,7 @@
   <rank/>
   <like/>
   <floor/>
-  <brank/>
+  <brand/>
 </div>
   
 </template>
