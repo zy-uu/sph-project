@@ -14,19 +14,31 @@
       </nav>
       <div class="sort">
         <div class="all-sort-list2">
-          <div class="item" v-for="(c1,index) in categoryList" :key=c1.categoryId>
-            <h3>
-              <a href="">{{c1.categoryName}}</a>
+          <div
+            class="item"
+            v-for="(c1, index) in categoryList"
+            :key="c1.categoryId"
+            :class="{'cur': currentIndex == index }"
+          >
+            <h3 @mouseenter="changeIndex(index)" @mouseleave="removeIndex" >
+              <a href="">{{ c1.categoryName }}-----{{index}}</a>
             </h3>
-            <div class="item-list clearfix">
-              <div class="subitem" v-for="(c2,index) in c1.categoryChild" :key="c2.categoryId">
+            <div class="item-list clearfix" :style="{display: currentIndex==index? 'block':''}">
+              <div
+                class="subitem"
+                v-for="(c2, index) in c1.categoryChild"
+                :key="c2.categoryId"
+              >
                 <dl class="fore">
                   <dt>
-                    <a href="">{{c2.categoryName}}</a>
+                    <a href="">{{ c2.categoryName }}</a>
                   </dt>
                   <dd>
-                    <em v-for="(c3,index) in c2.categoryChild" :key="c3.categoryChild">
-                      <a href="">{{c3.categoryName}}</a>
+                    <em
+                      v-for="(c3, index) in c2.categoryChild"
+                      :key="c3.categoryChild"
+                    >
+                      <a href="">{{ c3.categoryName }}</a>
                     </em>
                   </dd>
                 </dl>
@@ -40,22 +52,33 @@
 </template>
 
 <script>
-import {mapState} from 'vuex'
+import { mapState } from "vuex";
 export default {
-    name: 'typeNav',
-    data() {
-        return {}
+  name: "typeNav",
+  data() {
+    return {
+      currentIndex: -1,
+    };
+  },
+  mounted() {
+    this.$store.dispatch("categoryList");
+  },
+  computed: {
+    ...mapState({
+      categoryList: (state) => {
+        return state.home.categoryList;
+      },
+    }),
+  },
+  methods: {
+    changeIndex(index) {
+      this.currentIndex = index;
     },
-    mounted() {
-        this.$store.dispatch("categoryList");
-    },
-    computed: {
-        ...mapState({
-            categoryList: (state) => {
-                return state.home.categoryList
-            }
-        }) 
+    removeIndex() {
+        this.currentIndex = -1;
     }
+    
+  },
 };
 </script>
 <style lang="less" scoped>
@@ -168,11 +191,9 @@ export default {
             }
           }
 
-          &:hover {
-            .item-list {
-              display: block;
-            }
-          }
+        }
+        .cur {
+            background-color: skyblue;
         }
       }
     }
