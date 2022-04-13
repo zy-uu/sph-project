@@ -10,6 +10,11 @@ const routes = [
     name: 'Home',
     component: () => import("@/views/home")
   },
+  {
+    name: 'search',
+    path: '/search/:keyword?',
+    component: () => import("@/views/search")
+  }
   // {
   //   path: '/searvh',
   //   name: 'search',

@@ -99,7 +99,17 @@
   </div>
 </template>
 <script>
-export default {};
+export default {
+  data() {
+    return {}
+  },
+  methods: {
+    
+  },
+  mounted() {
+    this.$store.dispatch("getBanners")
+  }
+};
 </script>
 <style lang="less" scoped>
 .list-container {

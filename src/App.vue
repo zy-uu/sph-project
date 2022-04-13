@@ -16,15 +16,14 @@ export default {
     Header,
   },
   data() {
-    return {
-      
-    } 
-    
+    return {};
   },
-  methods: {
-    
-  }
-  
+  methods: {},
+  mounted() {
+    // 在根组件中只会执行一次，减小性能消耗
+    this.$store.dispatch("categoryList");
+
+  },
 };
 </script>
 <style lang="less">
