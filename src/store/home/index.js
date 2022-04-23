@@ -12,6 +12,9 @@ const mutations = {
     },
     BANNERS(state,bannerList) {
         state.bannerList = bannerList;
+    },
+    FLOORS(state,floorList) {
+        state.floorList = floorList;
     }
 };
 const actions = {
@@ -33,9 +36,12 @@ const actions = {
         }
     },
     //这也是mock
-    async getFloor() {
+    async getFloor({commit}) {
         let result = await reqFloors();
-        console.log(result)
+        let {data:res} = result;
+        if(res.code == 200) {
+            commit("FLOORS",res.data)
+        }
     }
 
 };

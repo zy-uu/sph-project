@@ -10,3 +10,9 @@ export const reqCategoryList = () => requests({
 export const reqBanners = () => mockRequests.get('/banners')
 
 export const reqFloors = () => mockRequests.get('/floors')
+
+export const reqSearchList = (params) => requests({
+    url: '/list',
+    method: "post",
+    data: params
+})

@@ -1,7 +1,5 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-
-
 Vue.use(VueRouter)
 
 const routes = [
@@ -15,12 +13,6 @@ const routes = [
     path: '/search/:keyword?',
     component: () => import("@/views/search")
   }
-  // {
-  //   path: '/searvh',
-  //   name: 'search',
-  //   component: () => import("@/")
-    
-  // }
 ]
 
 const routerConfig = {

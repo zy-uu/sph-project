@@ -2,10 +2,14 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
+import carousel from "@/components/carousel"
 import typeNav from '@/components/globalComponents/typeNav'
 import "@/mock/mockSever"
+//引入swiper 样式
+import "swiper/css/swiper.css";
 
 Vue.component(typeNav.name,typeNav)
+Vue.component(carousel.name,carousel)
 
 Vue.config.productionTip = false
 
