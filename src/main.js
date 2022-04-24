@@ -18,6 +18,10 @@ new Vue({
   // $route 可以获取到路由信息（path,query,params）
   // $router 进行路由的相应跳转
   router,
+  //全局时间总线$bus
+  beforeCreate() {
+    Vue.prototype.$bus = this;
+  },
   store,
   render: h => h(App)
 }).$mount('#app')

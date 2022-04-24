@@ -11,15 +11,24 @@
             </li>
           </ul>
           <ul class="fl sui-tag">
-            <li class="with-x">手机</li>
-            <li class="with-x">iphone<i>×</i></li>
-            <li class="with-x">华为<i>×</i></li>
-            <li class="with-x">OPPO<i>×</i></li>
+            <!-- 分类的面包屑 -->
+            <li class="with-x" v-if="searchParams.categoryName">
+              {{ searchParams.categoryName }}
+              <i @click="removeCategory">×</i>
+            </li>
+            <li class="with-x" v-if="searchParams.keyword">
+              {{ searchParams.keyword }}
+              <i @click="removeKeyword">×</i>
+            </li>
+            <li class="with-x" v-if="searchParams.trademark">
+              {{ searchParams.trademark }}
+              <i @click="removeTrade">×</i>
+            </li>
           </ul>
         </div>
 
         <!--selector-->
-        <SearchSelector />
+        <SearchSelector @tradeInfo="tradeInfo" />
 
         <!--details-->
         <div class="details clearfix">
@@ -134,7 +143,7 @@ import SearchSelector from "./SearchSelector/SearchSelector";
 import { mapGetters } from "vuex";
 export default {
   name: "search",
-  dataa() {
+  data() {
     return {
       searchParams: {
         category1Id: "",
@@ -142,7 +151,7 @@ export default {
         category3Id: "",
         categoryName: "",
         keyword: "",
-        order: "",
+        order: "1:desc",
         pageNo: 1,
         pageSize: 3,
         props: [],
@@ -154,28 +163,57 @@ export default {
     SearchSelector,
   },
   beforeMount() {
-    Object.assign(this.searchParams,this.$route.query,this.$route.params);
-    this.getData();
+    Object.assign(this.searchParams, this.$route.query, this.$route.params);
   },
   mounted() {
-    this.$store.dispatch("getSearchList");
+    // this.getData();
   },
   computed: {
     ...mapGetters(["goodsList"]),
   },
   methods: {
     getData() {
-      this.$store.dispatch("getSearchList",this.searchParams);
+      this.$store.dispatch("getSearchList", this.searchParams);
+    },
+    //移除分类的名字
+    removeCategory() {
+      this.searchParams.categoryName = undefined;
+      this.searchParams.category1Id = undefined;
+      this.searchParams.category2Id = undefined;
+      this.searchParams.category3Id = undefined;
+      this.getData();
+      if (this.$route.params) {
+        this.$router.push({ name: "search", params: this.$route.params });
+      }
+    },
+    //移除keyword的名字
+    removeKeyword() {
+      this.searchParams.keyword = undefined;
+      this.getData();
+      this.$bus.$emit("clear");
+      if (this.$route.query) {
+        this.$router.push({ name: "search", query: this.$route.query });
+      }
+    },
+    //移除trade的名字
+    removeTrade() {
+      this.searchParams.trademark = undefined;
+      this.getData();
+    },
+    //自定义事件
+    tradeInfo(trademark) {
+      this.searchParams.trademark = `${trademark.tmId}:${trademark.tmName}`
+      this.getData();
     }
   },
   watch: {
     $route() {
-      Object.assign(this.searchParams,this.$route.query,this.$route.params);
+      Object.assign(this.searchParams, this.$route.query, this.$route.params);
       this.getData();
-      this.searchParams.category1Id = '';
-      this.searchParams.category2Id = '';
-      this.searchParams.category3Id = '';
-    }
+      this.searchParams.category1Id = undefined;
+      this.searchParams.category2Id = undefined;
+      this.searchParams.category3Id = undefined;
+    },
   },
 };
 </script>

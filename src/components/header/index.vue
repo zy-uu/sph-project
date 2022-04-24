@@ -32,8 +32,19 @@
       </h1>
       <div class="searchArea">
         <form action="###" class="searchForm">
-          <input type="text" id="autocomplete" class="input-error input-xxlarge" v-model="keyword" />
-          <button class="sui-btn btn-xlarge btn-danger" type="button" @click="goSearch">搜索</button>
+          <input
+            type="text"
+            id="autocomplete"
+            class="input-error input-xxlarge"
+            v-model="keyword"
+          />
+          <button
+            class="sui-btn btn-xlarge btn-danger"
+            type="button"
+            @click="goSearch"
+          >
+            搜索
+          </button>
         </form>
       </div>
     </div>
@@ -43,29 +54,33 @@
 export default {
   data() {
     return {
-      keyword: ''
-    }
+      keyword: "",
+    };
+  },
+  mounted() {
+    this.$bus.$on("clear", () => {
+      this.keyword = "";
+    });
   },
   methods: {
     goSearch() {
       //! 该路由跳转无法显示params参数 并报重复路由路径错误
       //* 刚才报错的原因是 router 文件中没有占位
       //* 无法理解为什么要判断是否有query 因为query是空也会走下面
-      if(this.$route.query) {
-        console.log('lllll')
-        console.log(this.$route.query)
+      if (this.$route.query) {
+        console.log(this.$route.query);
         let location = {
-          name: 'search',
+          name: "search",
           params: {
-            keyword: this.keyword || undefined
+            keyword: this.keyword || undefined,
           },
-        }
+        };
         location.query = this.$route.query;
-        console.log(location)
-        this.$router.push(location)
+        console.log(location);
+        this.$router.push(location);
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
