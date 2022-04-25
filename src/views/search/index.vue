@@ -24,34 +24,46 @@
               {{ searchParams.trademark }}
               <i @click="removeTrade">×</i>
             </li>
+            <li
+              class="with-x"
+              v-for="(propsList, index) in searchParams.props"
+              :key="index"
+            >
+              {{ propsList.split(":")[1] }}
+              <i @click="removeProps(index)">×</i>
+            </li>
           </ul>
         </div>
 
         <!--selector-->
-        <SearchSelector @tradeInfo="tradeInfo" />
+        <SearchSelector @tradeInfo="tradeInfo" @attrInfo="attrInfo" />
 
         <!--details-->
         <div class="details clearfix">
           <div class="sui-navbar">
             <div class="navbar-inner filter">
               <ul class="sui-nav">
-                <li class="active">
-                  <a href="#">综合</a>
+                <li :class="{ active: isOne }" @click="changeOrder(1)">
+                  <a>
+                    综合
+                    <span
+                      v-show="isOne"
+                      class="iconfont"
+                      :class="{ 'icon-up': isAsc, 'icon-down': isDesc }"
+                    >
+                    </span>
+                  </a>
                 </li>
-                <li>
-                  <a href="#">销量</a>
-                </li>
-                <li>
-                  <a href="#">新品</a>
-                </li>
-                <li>
-                  <a href="#">评价</a>
-                </li>
-                <li>
-                  <a href="#">价格⬆</a>
-                </li>
-                <li>
-                  <a href="#">价格⬇</a>
+                <li :class="{ active: isTwo }" @click="changeOrder(2)">
+                  <a>
+                    价格
+                    <span
+                      v-show="isTwo"
+                      class="iconfont"
+                      :class="{ 'icon-up': isAsc, 'icon-down': isDesc }"
+                    >
+                    </span>
+                  </a>
                 </li>
               </ul>
             </div>
@@ -66,9 +78,9 @@
               >
                 <div class="list-wrap">
                   <div class="p-img">
-                    <a href="item.html" target="_blank">
+                    <router-link :to="`/detail/${good,id}`">
                       <img :src="good.defaultImg" />
-                    </a>
+                    </router-link>
                   </div>
                   <div class="price">
                     <strong>
@@ -103,34 +115,14 @@
               </li>
             </ul>
           </div>
-          <div class="fr page">
-            <div class="sui-pagination clearfix">
-              <ul>
-                <li class="prev disabled">
-                  <a href="#">«上一页</a>
-                </li>
-                <li class="active">
-                  <a href="#">1</a>
-                </li>
-                <li>
-                  <a href="#">2</a>
-                </li>
-                <li>
-                  <a href="#">3</a>
-                </li>
-                <li>
-                  <a href="#">4</a>
-                </li>
-                <li>
-                  <a href="#">5</a>
-                </li>
-                <li class="dotted"><span>...</span></li>
-                <li class="next">
-                  <a href="#">下一页»</a>
-                </li>
-              </ul>
-              <div><span>共10页&nbsp;</span></div>
-            </div>
+          <div>
+            <pagination
+              :pageNo="searchParams.pageNo"
+              :pageSize="searchParams.pageSize"
+              :total="total"
+              :continues="5"
+              @getPage="getPage"
+            />
           </div>
         </div>
       </div>
@@ -140,7 +132,7 @@
 
 <script>
 import SearchSelector from "./SearchSelector/SearchSelector";
-import { mapGetters } from "vuex";
+import { mapGetters, mapState } from "vuex";
 export default {
   name: "search",
   data() {
@@ -165,15 +157,33 @@ export default {
   beforeMount() {
     Object.assign(this.searchParams, this.$route.query, this.$route.params);
   },
-  mounted() {
-    // this.getData();
-  },
+  mounted() {},
   computed: {
+    ...mapState({
+      total: (state) => state.search.researchList.total,
+    }),
     ...mapGetters(["goodsList"]),
+    isOne() {
+      return this.searchParams.order.indexOf("1") != -1;
+    },
+    isTwo() {
+      return this.searchParams.order.indexOf("2") != -1;
+    },
+    isAsc() {
+      return this.searchParams.order.indexOf("asc") != -1;
+    },
+    isDesc() {
+      return this.searchParams.order.indexOf("desc") != -1;
+    },
   },
   methods: {
     getData() {
       this.$store.dispatch("getSearchList", this.searchParams);
+    },
+    //获取分页数据并发请求
+    getPage(pageNO) {
+      this.searchParams.pageNo = pageNO;
+      this.getData();
     },
     //移除分类的名字
     removeCategory() {
@@ -200,11 +210,39 @@ export default {
       this.searchParams.trademark = undefined;
       this.getData();
     },
+    //移除props名字
+    removeProps(index) {
+      this.searchParams.props.splice(index, 1);
+      this.getData();
+    },
     //自定义事件
     tradeInfo(trademark) {
-      this.searchParams.trademark = `${trademark.tmId}:${trademark.tmName}`
+      this.searchParams.trademark = `${trademark.tmId}:${trademark.tmName}`;
       this.getData();
-    }
+    },
+    //自定义事件
+    attrInfo(attr, attrValue) {
+      console.log(attr, attrValue);
+      let props = `${attr.attrId}:${attrValue}:${attr.attrName}`;
+      //数组去重
+      if (this.searchParams.props.indexOf(props) == -1) {
+        this.searchParams.props.push(props);
+      }
+      this.getData();
+    },
+    changeOrder(flag) {
+      let originOrder = this.searchParams.order;
+      let originFlag = originOrder.split(":")[0];
+      let originSort = originOrder.split(":")[1];
+      let newOrder = "";
+      if (flag == originFlag) {
+        newOrder = `${originFlag}:${originSort == "desc" ? "asc" : "desc"}`;
+      } else {
+        newOrder = `${flag}:${"desc"}`;
+      }
+      this.searchParams.order = newOrder;
+      this.getData();
+    },
   },
   watch: {
     $route() {

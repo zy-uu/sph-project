@@ -4,12 +4,14 @@ import router from './router'
 import store from './store'
 import carousel from "@/components/carousel"
 import typeNav from '@/components/globalComponents/typeNav'
+import pagination from "@/components/pagination"
 import "@/mock/mockSever"
 //引入swiper 样式
 import "swiper/css/swiper.css";
 
 Vue.component(typeNav.name,typeNav)
 Vue.component(carousel.name,carousel)
+Vue.component(pagination.name,pagination)
 
 Vue.config.productionTip = false
 

@@ -12,6 +12,11 @@ const routes = [
     name: 'search',
     path: '/search/:keyword?',
     component: () => import("@/views/search")
+  },
+  {
+    name: 'detail',
+    path: '/detail/:skuId',
+    component: () => import("@/views/detail")
   }
 ]
 
