@@ -83,7 +83,9 @@
             </div>
             <div class="cartWrap">
               <div class="controls">
-                <input class="itxt" />
+                <input class="itxt"
+                v-model="skuNum"
+                @change="changeSkuNum" />
                 <a href="javascript:" class="plus">+</a>
                 <a class="mins">-</a>
               </div>
@@ -91,7 +93,7 @@
                 <!-- 以前咱们的路由跳转：从A路由跳转到B路由，这里在加入购物车，进行路由跳转之前，发请求
                     把你购买的产品的信息通过请求的形式通知服务器，服务器进行相应的存储
                   -->
-                <a>加入购物车</a>
+                <a @click="addShopcar">加入购物车</a>
               </div>
             </div>
           </div>
@@ -335,7 +337,10 @@ import ImageList from "./ImageList/ImageList.vue";
 import Zoom from "./Zoom/Zoom.vue";
 export default {
   data() {
-    return {};
+    return {
+      skuNum: '',
+
+    };
   },
   components: {
     ImageList,
@@ -356,6 +361,38 @@ export default {
         item.isChecked = 0;
       })
       saleAttrValue.isChecked = 1;
+    },
+    changeSkuNum(event) {
+      //用户输入进来的文本 * 1
+      let value = event.target.value * 1;
+      // 如何用户输入非法，则出现NaN或者<1
+      if(isNaN(value) || value < 1) {
+        this.skuNum = 1;
+      }
+      else {
+        this.skuNum = parseInt(value);
+      }
+    },
+    //加入购物车
+    addShopcar() {
+      try {
+        this.$store.dispatch("addOrUpdateShopCart", {
+          skuId: this.$route.params.skuId,
+          skuNum:  this.skuNum
+        });
+        // 产品的信息，可以通过会话存储
+        // localStorage and sessionStorage 一般存储的是字符串
+        sessionStorage.setItem("SKUINFO",JSON.stringify(this.skuInfo));
+        this.$router.push({
+          name: 'addcartsuccess',
+          query: {
+            skuNum: this.skuNum
+          }
+        })
+      } catch (error) {
+        alert(error.message);
+      } 
+
     }
   }
 };

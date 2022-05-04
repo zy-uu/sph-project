@@ -19,5 +19,11 @@ export const reqSearchList = (params) => requests({
 
 export const reqGoodInfo = (skuId) => requests({
     url:`/item/${skuId}`,
-    method:'get'
+    method: 'get'
 })
+
+// 将产品添加到购物车当中
+export const reqAddOrUpdateShopCart = (skuId,skuNum) => requests({
+        url:`/cart/addToCart/${skuId}/${skuNum}`,
+        method: 'post'
+    })

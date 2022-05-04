@@ -1,4 +1,4 @@
-import { reqGoodInfo } from '@/api'
+import { reqGoodInfo,reqAddOrUpdateShopCart } from '@/api'
 const state = {
     goodsList: {}
 };
@@ -14,6 +14,16 @@ const actions = {
         console.log(res)
         if (res.code == 200) {
             commit("GOODINFO", res.data)
+        }
+    },
+    async addOrUpdateShopCart({skuId,skuNum}) {
+        // ATTENTION: async函数执行返回的结果是一个promise {成功或者失败}
+        let result = await reqAddOrUpdateShopCart(skuId,skuNum);
+        if(result.code == 200) {
+            return 'ok';
+        }
+        else {
+            return Promise.reject(new Error("fail"));
         }
     }
 };
