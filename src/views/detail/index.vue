@@ -6,19 +6,19 @@
     <!-- 主要内容区域 -->
     <section class="con">
       <!-- 导航路径区域 -->
-      <div class="conPoin">
-        
-      </div>
+      <div class="conPoin"></div>
       <!-- 主要内容区域 -->
       <div class="mainCon">
         <!-- 左侧放大镜区域 -->
         <div class="previewWrap">
+          <Zoom :skuImageList="skuImageList" />
+          <ImageList :skuImageList="skuImageList" />
         </div>
         <!-- 右侧选择区域布局 -->
         <div class="InfoWrap">
           <div class="goodsDetail">
-            <h3 class="InfoName"></h3>
-            <p class="news"></p>
+            <h3 class="InfoName">{{ skuInfo.skuName }}</h3>
+            <p class="news">{{ skuInfo.skuDesc }}</p>
             <div class="priceArea">
               <div class="priceArea1">
                 <div class="title">
@@ -26,7 +26,7 @@
                 </div>
                 <div class="price">
                   <i>¥</i>
-                  <em></em>
+                  <em>{{ skuInfo.price }}</em>
                   <span>降价通知</span>
                 </div>
                 <div class="remark">
@@ -66,30 +66,26 @@
             <div class="chooseArea">
               <div class="choosed"></div>
               <dl
-                
+                v-for="(spuSaleAttr, index) in spuSaleAttrList"
+                :key="spuSaleAttr.id"
               >
-                <dt class="title"></dt>
+                <dt class="title">{{ spuSaleAttr.saleAttrName }}</dt>
                 <dd
-                 
+                  v-for="(
+                    spuSaleAttrValue, index
+                  ) in spuSaleAttr.spuSaleAttrValueList"
+                  :key="spuSaleAttrValue.id"
+                  :class="{active:spuSaleAttrValue.isChecked == 1}"
+                  @click="changeActive(spuSaleAttrValue,spuSaleAttr.spuSaleAttrValueList)"
                 >
-              
-                </dd>
+                {{spuSaleAttrValue.saleAttrValueName}}</dd>
               </dl>
             </div>
             <div class="cartWrap">
               <div class="controls">
-                <input
-                 
-                  class="itxt"
-                  
-                />
-                <a href="javascript:" class="plus" >+</a>
-                <a
-  
-                  class="mins"
-
-                  >-</a
-                >
+                <input class="itxt" />
+                <a href="javascript:" class="plus">+</a>
+                <a class="mins">-</a>
               </div>
               <div class="add">
                 <!-- 以前咱们的路由跳转：从A路由跳转到B路由，这里在加入购物车，进行路由跳转之前，发请求
@@ -266,9 +262,7 @@
             </ul>
             <div class="result">
               <div class="num">已选购0件商品</div>
-              <div class="price-tit">
-                套餐价
-              </div>
+              <div class="price-tit">套餐价</div>
               <div class="price">￥5299</div>
               <button class="addshopcar">加入购物车</button>
             </div>
@@ -277,29 +271,19 @@
         <div class="intro">
           <ul class="tab-wraped">
             <li class="active">
-              <a href="###">
-                商品介绍
-              </a>
+              <a href="###"> 商品介绍 </a>
             </li>
             <li>
-              <a href="###">
-                规格与包装
-              </a>
+              <a href="###"> 规格与包装 </a>
             </li>
             <li>
-              <a href="###">
-                售后保障
-              </a>
+              <a href="###"> 售后保障 </a>
             </li>
             <li>
-              <a href="###">
-                商品评价
-              </a>
+              <a href="###"> 商品评价 </a>
             </li>
             <li>
-              <a href="###">
-                手机社区
-              </a>
+              <a href="###"> 手机社区 </a>
             </li>
           </ul>
           <div class="tab-content">
@@ -346,17 +330,35 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+import ImageList from "./ImageList/ImageList.vue";
+import Zoom from "./Zoom/Zoom.vue";
 export default {
-    data() {
-        return {
-
-        }
+  data() {
+    return {};
+  },
+  components: {
+    ImageList,
+    Zoom,
+  },
+  mounted() {
+    this.$store.dispatch("getGoodInfo", this.$route.params.skuId);
+  },
+  computed: {
+    ...mapGetters(["skuInfo", "categoryView", "spuSaleAttrList"]),
+    skuImageList() {
+      return this.skuInfo.skuImageList || [];
     },
-    mounted() {
-        this.$store.dispatch("getGoodInfo")
+  },
+  methods: {
+    changeActive(saleAttrValue,arr) {
+      arr.forEach(item => {
+        item.isChecked = 0;
+      })
+      saleAttrValue.isChecked = 1;
     }
-    
-}
+  }
+};
 </script>
 
 <style lang="less" scoped>
